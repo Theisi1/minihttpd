@@ -22,4 +22,11 @@ int ConnectionPassiveTCP(char *service, int qlen){
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
         return(-1);
     } 
+    for ( p = res; p != NULL; p = p->ai_next){
+        sd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if(sd == -1){
+            perror("No se pudo crear el socket ");
+            continue;
+        }
+
 }
