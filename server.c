@@ -46,4 +46,12 @@ int ConnectionPassiveTCP(char *service, int qlen){
         fprintf(stderr, "No hay nodo\n");
         return(-1);
     }
+
+    if(listen(sd, qlen) == -1){
+        perror("No se escucha ninguna conexión");
+        close(sd);
+        return -1;
+    }
+    //fuera del if de listen para que al final de la llamada retorne el socket sd
+    return sd;
 }
