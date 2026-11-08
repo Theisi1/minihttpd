@@ -62,8 +62,8 @@ int server(char *service){
         return -1;
     }
 
-    struct sockaddr_storage cltAddr;
-    socklen_t l;
+    struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec
+    socklen_t l;        // (tamaño)
 
     while (1){
 
