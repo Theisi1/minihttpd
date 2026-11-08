@@ -33,5 +33,11 @@ int ConnectionPassiveTCP(char *service, int qlen){
             close(sd);
             continue;
         }
+        if(bind(sd, p->ai_addr, p->ai_addrlen) == -1){
+            perror("Error en el bind");
+            close(sd);
+            continue;
+        }
+        break;
     }
 }
