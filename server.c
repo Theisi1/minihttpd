@@ -40,4 +40,10 @@ int ConnectionPassiveTCP(char *service, int qlen){
         }
         break;
     }
+
+    freeaddrinfo(res);
+    if(p == NULL){      //resume los errores de los bucles del for
+        fprintf(stderr, "No hay nodo\n");
+        return(-1);
+    }
 }
