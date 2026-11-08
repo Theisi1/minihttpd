@@ -1,4 +1,5 @@
 *:Zone.Identifier
 *.swp
 *.o
-*servidorhttp
+servidorhttp
+server
