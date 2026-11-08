@@ -58,14 +58,20 @@ int ConnectionPassiveTCP(char *service, int qlen){
 
 int server(char *service){
     int sd = ConnectionPassiveTCP(service, 5);
+    int nsd;
     if(sd == -1){
         return -1;
     }
 
-    struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec
+    struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec(cualquiera)
     socklen_t l;        // (tamaño)
 
     while (1){
-
+        l = sizeof(cltAddr);
+        nsd = accept(sd, (struct sockaddr *)&cltAddr, &l);
+        if(nsd == -1){
+            perror("Error en el accept");
+            continue;
+        }
     }
 }
