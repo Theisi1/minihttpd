@@ -55,3 +55,17 @@ int ConnectionPassiveTCP(char *service, int qlen){
     //fuera del if de listen para que al final de la llamada retorne el socket sd
     return sd;
 }
+
+int server(char *service){
+    int sd = ConnectionPassiveTCP(service, 5);
+    if(sd == -1){
+        return -1;
+    }
+
+    struct sockaddr_storage cltAddr;
+    socklen_t l;
+
+    while (1){
+
+    }
+}
