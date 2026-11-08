@@ -27,6 +27,11 @@ int ConnectionPassiveTCP(char *service, int qlen){
         if(sd == -1){
             perror("No se pudo crear el socket ");
             continue;
+        }     
+        if(setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &act, sizeof(act)) == -1){
+            perror("Error en setsockpot");
+            close(sd);
+            continue;
         }
-
+    }
 }
