@@ -100,6 +100,14 @@ int server(char *service){
             snprintf(comp_ruta, sizeof(comp_ruta), "www%s", ruta);
 
         }
+
+        int fd = open(comp_ruta, O_RDONLY);
+        if (fd == -1){
+            close(nsd);
+            close(fd);
+            continue;
+        }
+
         close(nsd);
     }
 }
