@@ -87,9 +87,19 @@ int server(char *service){
         char version[128];
 
         int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
+        if(scaner != 3){
+            close(nsd);
+            continue;
+        }
 
+        char comp_ruta[1028];
+        int comparacion = strcmp(ruta, "/");
+        if(comparacion == 0){
+            snprintf(comp_ruta, sizeof(comp_ruta), "www%s", "/index.html");
+        }else{
+            snprintf(comp_ruta, sizeof(comp_ruta), "www%s", ruta);
 
-
+        }
         close(nsd);
     }
 }
