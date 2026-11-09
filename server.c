@@ -104,10 +104,9 @@ int server(char *service){
         int fd = open(comp_ruta, O_RDONLY);
         if (fd == -1){
             close(nsd);
-            close(fd);
             continue;
         }
-
+        close(fd);
         close(nsd);
     }
 }
