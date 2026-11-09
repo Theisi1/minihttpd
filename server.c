@@ -5,6 +5,7 @@
 #include <fcntl.h>  // open O_RDONLY
 #include <sys/types.h>  //getaddrinfo y freeaddrinfo
 #include <sys/socket.h> // socket, bind, listen y accept
+#include <sys/stat.h>  //fstat
 #include <netdb.h>
 
 int ConnectionPassiveTCP(char *service, int qlen){
@@ -106,6 +107,18 @@ int server(char *service){
             close(nsd);
             continue;
         }
+        //09/11/2026 - 12:09 Tengo que agregar al cuaderno 
+        //armando respuesta 200 OK
+        struct stat info;
+        int st = fstat(fd, &info); //fstat obetener el estado del archivo
+        if (st == -1){
+            perror("Error en el fstat");
+            close(fd);
+            close(nsd);
+            continue;
+        }
+
+
         close(fd);
         close(nsd);
     }
