@@ -58,7 +58,7 @@ int ConnectionPassiveTCP(char *service, int qlen){
 
 int server(char *service){
     int sd = ConnectionPassiveTCP(service, 5);
-    int nsd;
+    int nsd, nread;
     if(sd == -1){
         return -1;
     }
@@ -73,6 +73,15 @@ int server(char *service){
             perror("Error en el accept");
             continue;
         }
+        //lectura
+        char buf[1024];
+        nread = read(nsd, buf, sizeof(buf) - 1);
+        if (nread <= 0){
+            close(nsd);
+            continue;
+        }
+        buf[nread] = '\0';
+
         close(nsd);
     }
 }
