@@ -82,6 +82,14 @@ int server(char *service){
         }
         buf[nread] = '\0';
 
+        char metodo[64];
+        char ruta[1024];
+        char version[128];
+
+        int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
+
+
+
         close(nsd);
     }
 }
