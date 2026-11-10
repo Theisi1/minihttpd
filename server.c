@@ -107,7 +107,6 @@ int server(char *service){
             close(nsd);
             continue;
         }
-        //09/11/2026 - 12:09 Tengo que agregar al cuaderno 
         //armando respuesta 200 OK
         struct stat info;
         int st = fstat(fd, &info); //fstat obetener el estado del archivo
