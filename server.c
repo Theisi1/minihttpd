@@ -116,6 +116,15 @@ int server(char *service){
             close(nsd);
             continue;
         }
+        //cabecera
+        char header[256]; 
+        int head = snprintf(header, sizeof(header), 
+        "HTTP/1.1 200 OK\r\n"
+        "Content-type: text/html\r\n"
+        "Content-Length: %lld\r\n"
+        "Connection: close\r\n" 
+        "\r\n", 
+        (long long)info.st_size);
 
 
         close(fd);
