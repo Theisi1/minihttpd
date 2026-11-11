@@ -126,6 +126,13 @@ int server(char *service){
         "\r\n", 
         (long long)info.st_size);
 
+        ssize_t wr = write(nsd, header, head);    //navegador recibe
+        if(wr == -1){
+            perror("Error en write de cabecera");
+            close(fd);
+            close(nsd);
+            continue;
+        }
 
         close(fd);
         close(nsd);
