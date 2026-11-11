@@ -138,11 +138,24 @@ int server(char *service){
         //Enviar el cuerpo
         char cuerpo[4096]; 
         while ((nread = read(fd, cuerpo, sizeof(cuerpo))) > 0){
-            write(nsd, cuerpo, nread);
+            ssize_t sends = 0;
+            while(sends < nread){
+                ssize_t writ = write(nsd, cuerpo + sends, nread - sends);
+                if(writ == -1){
+                    perror("No se envio todo el archivo");
+                    break;
+                }
+                sends += writ;        
+            }
+            if(sends < nread){
+                break;
+            }    
         }
+
         if( nread == -1){
             perror("Error en leer el archivo");
         }
+        
 
         close(fd);
         close(nsd);
