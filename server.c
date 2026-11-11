@@ -59,7 +59,8 @@ int ConnectionPassiveTCP(char *service, int qlen){
 
 int server(char *service){
     int sd = ConnectionPassiveTCP(service, 5);
-    int nsd, nread;
+    int nsd;
+    ssize_t nread;
     if(sd == -1){
         return -1;
     }
@@ -132,6 +133,15 @@ int server(char *service){
             close(fd);
             close(nsd);
             continue;
+        }
+
+        //Enviar el cuerpo
+        char cuerpo[4096]; 
+        while ((nread = read(fd, cuerpo, sizeof(cuerpo))) > 0){
+            write(nsd, cuerpo, nread);
+        }
+        if( nread == -1){
+            perror("Error en leer el archivo");
         }
 
         close(fd);
