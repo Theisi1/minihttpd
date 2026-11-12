@@ -87,9 +87,20 @@ int server(char *service){
         char metodo[64];
         char ruta[1024];
         char version[128];
-
         int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
         if(scaner != 3){
+            char errcuatrocero[256];
+            int cuat = snprintf(errcuatrocero, sizeof(errcuatrocero),
+            "HTTP/1.1 400 Bad Request\r\n"
+            "Content-Length: 0\r\n"
+            "Connection: close\r\n"
+            "\r\n");
+            ssize_t wr = write(nsd, errcuatrocero, cuat);    //navegador recibe 400
+            if(wr == -1){
+                perror("Error en write de cabecera 400");
+                close(nsd);
+                continue;
+            }
             close(nsd);
             continue;
         }
@@ -105,14 +116,14 @@ int server(char *service){
 
         if( strcmp(metodo, "GET") != 0 ){
             fprintf(stderr,"No es el metodo correcto\n");
-            char metcuatro[256];
-            int cuat = snprintf(metcuatro, sizeof(metcuatro),
+            char errcuatro[256];
+            int cuat = snprintf(errcuatro, sizeof(errcuatro),
             "HTTP/1.1 405 Method Not Allowed\r\n"
             "Allow: GET\r\n"
             "Content-Length: 0\r\n"
             "Connection: close\r\n"
             "\r\n");
-            ssize_t wr = write(nsd, metcuatro, cuat);    //navegador recibe 405
+            ssize_t wr = write(nsd, errcuatro, cuat);    //navegador recibe 405
             if(wr == -1){
                 perror("Error en write de cabecera 405");
                 close(nsd);
