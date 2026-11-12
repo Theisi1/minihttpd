@@ -103,6 +103,12 @@ int server(char *service){
 
         }
 
+        if( strcmp(metodo, "GET") != 0 ){
+            fprintf(stderr,"No es el metodo correcto\n");
+            close(nsd);
+            continue;
+        }
+
         int fd = open(comp_ruta, O_RDONLY);
         if (fd == -1){
             close(nsd);
