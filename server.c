@@ -105,6 +105,19 @@ int server(char *service){
 
         if( strcmp(metodo, "GET") != 0 ){
             fprintf(stderr,"No es el metodo correcto\n");
+            char metcuatro[256];
+            int cuat = snprintf(metcuatro, sizeof(metcuatro),
+            "HTTP/1.1 405 Method Not Allowed\r\n"
+            "Allow: GET\r\n"
+            "Content-Length: 0\r\n"
+            "Connection: close\r\n"
+            "\r\n");
+            ssize_t wr = write(nsd, metcuatro, cuat);    //navegador recibe 405
+            if(wr == -1){
+                perror("Error en write de cabecera 405");
+                close(nsd);
+                continue;
+            }
             close(nsd);
             continue;
         }
