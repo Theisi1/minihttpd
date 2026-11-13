@@ -168,7 +168,19 @@ int server(char *service){
                 close(nsd);
                 continue;
             }
-
+            char quinientos [256];
+            perror("open");
+            int quini = snprintf(quinientos, sizeof(quinientos),
+            "HTTP/1.1 500 Internal Server Error\r\n"
+            "Content-Length: 0\r\n"
+            "Connection: close\r\n"
+            "\r\n");
+            ssize_t wr = write(nsd, quinientos, quini);    //navegador recibe 500
+            if(wr == -1){
+                perror("Error en write de cabecera 500");
+                close(nsd);
+                continue;
+            }
             close(nsd);
             continue;
         }
