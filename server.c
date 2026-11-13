@@ -152,6 +152,23 @@ int server(char *service){
                 close(nsd);
                 continue;
             }
+            if(errno == EACCES  ){
+                char errocuatrotres [256];
+                int cuat = snprintf(errocuatrotres, sizeof(errocuatrotres),
+                "HTTP/1.1 403 Forbidden\r\n"
+                "Content-Length: 0\r\n"
+                "Connection: close\r\n"
+                "\r\n");
+                ssize_t wr = write(nsd, errocuatrotres, cuat);    //navegador recibe 403
+                if(wr == -1){
+                    perror("Error en write de cabecera 403");
+                    close(nsd);
+                    continue;
+                }
+                close(nsd);
+                continue;
+            }
+
             close(nsd);
             continue;
         }
