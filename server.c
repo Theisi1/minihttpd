@@ -1,12 +1,13 @@
-#include <string.h>   //memset
-#include <stdio.h>  //perror
-#include <stdlib.h> // exit
-#include <unistd.h> //read, write y close
-#include <fcntl.h>  // open O_RDONLY
-#include <sys/types.h>  //getaddrinfo y freeaddrinfo
-#include <sys/socket.h> // socket, bind, listen y accept
-#include <sys/stat.h>  //fstat
+#include <string.h>   
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <unistd.h> 
+#include <fcntl.h>  
+#include <sys/types.h>  
+#include <sys/socket.h> 
+#include <sys/stat.h>  
 #include <netdb.h>
+#include <errno.h>
 
 int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
@@ -135,6 +136,22 @@ int server(char *service){
 
         int fd = open(comp_ruta, O_RDONLY);
         if (fd == -1){
+            if(errno == ENOENT){
+                char errocuatrocuatro [256];
+                int cuat = snprintf(errocuatrocuatro, sizeof(errocuatrocuatro),
+                "HTTP/1.1 404 Not Found\r\n"
+                "Content-Length: 0\r\n"
+                "Connection: close\r\n"
+                "\r\n");
+                ssize_t wr = write(nsd, errocuatrocuatro, cuat);    //navegador recibe 404
+                if(wr == -1){
+                    perror("Error en write de cabecera 404");
+                    close(nsd);
+                    continue;
+                }
+                close(nsd);
+                continue;
+            }
             close(nsd);
             continue;
         }
