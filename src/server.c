@@ -91,18 +91,7 @@ int server(char *service){
         char version[128];
         int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
         if(scaner != 3){
-            char errcuatrocero[256];
-            int cuat = snprintf(errcuatrocero, sizeof(errcuatrocero),
-            "HTTP/1.1 400 Bad Request\r\n"
-            "Content-Length: 0\r\n"
-            "Connection: close\r\n"
-            "\r\n");
-            ssize_t wr = write(nsd, errcuatrocero, cuat);    //navegador recibe 400
-            if(wr == -1){
-                perror("Error en write de cabecera 400");
-                close(nsd);
-                continue;
-            }
+            responder_error("400", "Bad Request", nsd);
             close(nsd);
             continue;
         }
