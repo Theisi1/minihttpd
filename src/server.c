@@ -8,6 +8,7 @@
 #include <sys/stat.h>  
 #include <netdb.h>
 #include <errno.h>
+#include "http.h"
 
 int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
