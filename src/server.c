@@ -123,19 +123,8 @@ int server(char *service){
                 close(nsd);
                 continue;
             }
-            char quinientos [256];
             perror("open");
-            int quini = snprintf(quinientos, sizeof(quinientos),
-            "HTTP/1.1 500 Internal Server Error\r\n"
-            "Content-Length: 0\r\n"
-            "Connection: close\r\n"
-            "\r\n");
-            ssize_t wr = write(nsd, quinientos, quini);    //navegador recibe 500
-            if(wr == -1){
-                perror("Error en write de cabecera 500");
-                close(nsd);
-                continue;
-            }
+            responder_error("500","Internal Server Error", nsd);
             close(nsd);
             continue;
         }
@@ -144,6 +133,7 @@ int server(char *service){
         int st = fstat(fd, &info); //fstat obetener el estado del archivo
         if (st == -1){
             perror("Error en el fstat");
+            responder_error("500","Internal Server Error", nsd);
             close(fd);
             close(nsd);
             continue;
