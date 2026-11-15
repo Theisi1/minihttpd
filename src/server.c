@@ -140,7 +140,7 @@ int server(char *service){
             close(nsd);
             continue;
         }
-        //cabecera
+    
         char header[256]; 
         int head = snprintf(header, sizeof(header), 
         "HTTP/1.1 200 OK\r\n"
@@ -150,7 +150,7 @@ int server(char *service){
         "\r\n", 
         extension(comp_ruta), (long long) info.st_size);
 
-        ssize_t wr = write(nsd, header, head);    //navegador recibe
+        ssize_t wr = write(nsd, header, head);    
         if(wr == -1){
             perror("Error en write de cabecera");
             close(fd);
