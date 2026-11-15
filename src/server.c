@@ -125,10 +125,17 @@ int server(char *service){
             continue;
         }
         struct stat info;
-        int st = fstat(fd, &info); //fstat obetener el estado del archivo
+        int st = fstat(fd, &info); 
         if (st == -1){
             perror("Error en el fstat");
             responder_error("500","Internal Server Error", nsd);
+            close(fd);
+            close(nsd);
+            continue;
+        }
+
+        if(S_ISDIR(info.st_mode)){
+            responder_error("403", "Forbidden", nsd);
             close(fd);
             close(nsd);
             continue;
