@@ -21,7 +21,7 @@ int abrir_archivo(const char *ruta, char *comp_ruta, size_t tam){
     if(realpath(comp_ruta, real) == NULL){
         return -1;
     }
-    if(strncmp(real, raiz, strlen(raiz)) != 0){
+    if(strncmp(real, raiz, strlen(raiz)) != 0 || (real[strlen(raiz)] != '/' && real[strlen(raiz)] != '\0' )){
         errno = EACCES;
         return -1;
     }
