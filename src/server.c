@@ -10,7 +10,7 @@
 #include <errno.h>
 #include "http.h"
 
-int ConnectionPassiveTCP(char *service, int qlen){
+static int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
     int act = 1;
     struct addrinfo hints, *res, *p;
