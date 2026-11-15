@@ -11,6 +11,7 @@
 #include "http.h"
 #include "mime.h"
 #include "server.h"
+#include "files.h"
 
 static int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
@@ -99,13 +100,6 @@ int server(char *service){
         }
 
         char comp_ruta[1028];
-        int comparacion = strcmp(ruta, "/");
-        if(comparacion == 0){
-            snprintf(comp_ruta, sizeof(comp_ruta), "www%s", "/index.html");
-        }else{
-            snprintf(comp_ruta, sizeof(comp_ruta), "www%s", ruta);
-
-        }
 
         if( strcmp(metodo, "GET") != 0 ){
             responder_error("405", "Method Not Allowed", nsd);
@@ -113,7 +107,7 @@ int server(char *service){
             continue;
         }
 
-        int fd = open(comp_ruta, O_RDONLY);
+        int fd = abrir_archivo(ruta, comp_ruta, sizeof(comp_ruta));
         if (fd == -1){
             if(errno == ENOENT){
                 responder_error("404", "Not Found", nsd);
