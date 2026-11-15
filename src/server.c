@@ -79,7 +79,7 @@ int server(char *service){
             perror("Error en el accept");
             continue;
         }
-        //lectura
+        
         char buf[1024];
         nread = read(nsd, buf, sizeof(buf) - 1);
         if (nread <= 0){
@@ -130,7 +130,6 @@ int server(char *service){
             close(nsd);
             continue;
         }
-        //armando respuesta 200 OK
         struct stat info;
         int st = fstat(fd, &info); //fstat obetener el estado del archivo
         if (st == -1){
@@ -158,7 +157,6 @@ int server(char *service){
             continue;
         }
 
-        //Enviar el cuerpo
         char cuerpo[4096]; 
         while ((nread = read(fd, cuerpo, sizeof(cuerpo))) > 0){
             ssize_t sends = 0;
