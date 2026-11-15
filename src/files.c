@@ -25,6 +25,6 @@ int abrir_archivo(const char *ruta, char *comp_ruta, size_t tam){
         errno = EACCES;
         return -1;
     }
-    int fd = open(comp_ruta, O_RDONLY);
+    int fd = open(real, O_RDONLY);
     return fd;
 }
