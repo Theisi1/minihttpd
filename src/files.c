@@ -16,6 +16,10 @@ int abrir_archivo(const char *ruta, char *comp_ruta, size_t tam){
     if(realpath("www", raiz ) == NULL){
         return -1;
     }
+    char real[PATH_MAX];
+    if(realpath(comp_ruta, real) == NULL){
+        return -1;
+    }
     int fd = open(comp_ruta, O_RDONLY);
     return fd;
 }
