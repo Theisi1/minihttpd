@@ -9,6 +9,8 @@
 #include <netdb.h>
 #include <errno.h>
 #include "http.h"
+#include "mime.h"
+#include "server.h"
 
 static int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
@@ -142,11 +144,11 @@ int server(char *service){
         char header[256]; 
         int head = snprintf(header, sizeof(header), 
         "HTTP/1.1 200 OK\r\n"
-        "Content-type: text/html\r\n"
+        "Content-type: %s\r\n"
         "Content-Length: %lld\r\n"
         "Connection: close\r\n" 
         "\r\n", 
-        (long long)info.st_size);
+        extension(comp_ruta), (long long) info.st_size);
 
         ssize_t wr = write(nsd, header, head);    //navegador recibe
         if(wr == -1){
