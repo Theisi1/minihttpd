@@ -120,6 +120,9 @@ int server(char *service){
                 l = sizeof(cltAddr);
                 nsd = accept(sd, (struct sockaddr *)&cltAddr, &l);
                 if(nsd == -1){
+                    if(errno == EAGAIN || errno == EWOULDBLOCK){
+                        continue;
+                    }
                     perror("Error en el accept");
                     continue;
                 }
