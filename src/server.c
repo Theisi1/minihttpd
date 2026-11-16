@@ -84,6 +84,10 @@ int server(char *service){
     if(sd == -1){
         return -1;
     }
+    if(poner_no_bloqueante(sd) == -1){
+        close(sd);
+        return -1;
+    }
     int epfd = epoll_create1(0);     
     if(epfd == -1){
         perror("Fallo epoll");
