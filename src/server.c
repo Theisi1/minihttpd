@@ -111,112 +111,115 @@ int server(char *service){
             perror("Fallo en epoll_wait");
             continue;
         }
-        l = sizeof(cltAddr);
-        nsd = accept(sd, (struct sockaddr *)&cltAddr, &l);
-        if(nsd == -1){
-            perror("Error en el accept");
-            continue;
-        }
-        
-        char buf[1024];
-        nread = read(nsd, buf, sizeof(buf) - 1);
-        if (nread <= 0){
-            close(nsd);
-            continue;
-        }
-        buf[nread] = '\0';
-
-        char metodo[64];
-        char ruta[1024];
-        char version[128];
-        int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
-        if(scaner != 3){
-            responder_error("400", "Bad Request", nsd);
-            close(nsd);
-            continue;
-        }
-
-        char comp_ruta[1028];
-
-        if( strcmp(metodo, "GET") != 0 ){
-            responder_error("405", "Method Not Allowed", nsd);
-            close(nsd);
-            continue;
-        }
-
-        int fd = abrir_archivo(ruta, comp_ruta, sizeof(comp_ruta));
-        if (fd == -1){
-            if(errno == ENOENT){
-                responder_error("404", "Not Found", nsd);
-                close(nsd);
-                continue;
-            }
-            if(errno == EACCES  ){
-                responder_error("403", "Forbidden", nsd);
-                close(nsd);
-                continue;
-            }
-            perror("open");
-            responder_error("500","Internal Server Error", nsd);
-            close(nsd);
-            continue;
-        }
-        struct stat info;
-        int st = fstat(fd, &info); 
-        if (st == -1){
-            perror("Error en el fstat");
-            responder_error("500","Internal Server Error", nsd);
-            close(fd);
-            close(nsd);
-            continue;
-        }
-
-        if(S_ISDIR(info.st_mode)){
-            responder_error("403", "Forbidden", nsd);
-            close(fd);
-            close(nsd);
-            continue;
-        }
-    
-        char header[256]; 
-        int head = snprintf(header, sizeof(header), 
-        "HTTP/1.1 200 OK\r\n"
-        "Content-type: %s\r\n"
-        "Content-Length: %lld\r\n"
-        "Connection: close\r\n" 
-        "\r\n", 
-        extension(comp_ruta), (long long) info.st_size);
-
-        ssize_t wr = write(nsd, header, head);    
-        if(wr == -1){
-            perror("Error en write de cabecera");
-            close(fd);
-            close(nsd);
-            continue;
-        }
-
-        char cuerpo[4096]; 
-        while ((nread = read(fd, cuerpo, sizeof(cuerpo))) > 0){
-            ssize_t sends = 0;
-            while(sends < nread){
-                ssize_t writ = write(nsd, cuerpo + sends, nread - sends);
-                if(writ == -1){
-                    perror("No se envio todo el archivo");
-                    break;
+        for(int i = 0; i < n; i++){
+            if(eventos[i].data.fd == sd){
+                l = sizeof(cltAddr);
+                nsd = accept(sd, (struct sockaddr *)&cltAddr, &l);
+                if(nsd == -1){
+                    perror("Error en el accept");
+                    continue;
                 }
-                sends += writ;        
+
+                char buf[1024];
+                nread = read(nsd, buf, sizeof(buf) - 1);
+                if (nread <= 0){
+                    close(nsd);
+                    continue;
+                }
+                buf[nread] = '\0';
+
+                char metodo[64];
+                char ruta[1024];
+                char version[128];
+                int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
+                if(scaner != 3){
+                    responder_error("400", "Bad Request", nsd);
+                    close(nsd);
+                    continue;
+                }
+
+                char comp_ruta[1028];
+
+                if( strcmp(metodo, "GET") != 0 ){
+                    responder_error("405", "Method Not Allowed", nsd);
+                    close(nsd);
+                    continue;
+                }
+
+                int fd = abrir_archivo(ruta, comp_ruta, sizeof(comp_ruta));
+                if (fd == -1){
+                    if(errno == ENOENT){
+                        responder_error("404", "Not Found", nsd);
+                        close(nsd);
+                        continue;
+                    }
+                    if(errno == EACCES  ){
+                        responder_error("403", "Forbidden", nsd);
+                        close(nsd);
+                        continue;
+                    }
+                    perror("open");
+                    responder_error("500","Internal Server Error", nsd);
+                    close(nsd);
+                    continue;
+                }
+                struct stat info;
+                int st = fstat(fd, &info);
+                if (st == -1){
+                    perror("Error en el fstat");
+                    responder_error("500","Internal Server Error", nsd);
+                    close(fd);
+                    close(nsd);
+                    continue;
+                }
+
+                if(S_ISDIR(info.st_mode)){
+                    responder_error("403", "Forbidden", nsd);
+                    close(fd);
+                    close(nsd);
+                    continue;
+                }
+
+                char header[256];
+                int head = snprintf(header, sizeof(header),
+                "HTTP/1.1 200 OK\r\n"
+                "Content-type: %s\r\n"
+                "Content-Length: %lld\r\n"
+                "Connection: close\r\n"
+                "\r\n",
+                extension(comp_ruta), (long long) info.st_size);
+
+                ssize_t wr = write(nsd, header, head);
+                if(wr == -1){
+                    perror("Error en write de cabecera");
+                    close(fd);
+                    close(nsd);
+                    continue;
+                }
+
+                char cuerpo[4096];
+                while ((nread = read(fd, cuerpo, sizeof(cuerpo))) > 0){
+                    ssize_t sends = 0;
+                    while(sends < nread){
+                        ssize_t writ = write(nsd, cuerpo + sends, nread - sends);
+                        if(writ == -1){
+                            perror("No se envio todo el archivo");
+                            break;
+                        }
+                        sends += writ;
+                    }
+                    if(sends < nread){
+                        break;
+                    }
+                }
+
+                if( nread == -1){
+                    perror("Error en leer el archivo");
+                }
+
+                close(fd);
+                close(nsd);
             }
-            if(sends < nread){
-                break;
-            }    
         }
-
-        if( nread == -1){
-            perror("Error en leer el archivo");
-        }
-        
-
-        close(fd);
-        close(nsd);
     }
 }
