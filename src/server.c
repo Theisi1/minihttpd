@@ -62,6 +62,19 @@ static int ConnectionPassiveTCP(char *service, int qlen){
     return sd;
 }
 
+static int poner_no_bloqueante(int fd){
+    int flags =  fcntl(fd, F_GETFL); 
+    if(flags == -1 ){
+        perror("Falló fcntl F_GETFL ");
+        return -1;
+    }
+    if(fcntl(fd, F_SETFL, flags | O_NONBLOCK)== -1){
+        perror("Fallo fcntl F_SETFL");
+        return -1;
+    }
+    return 0;
+}
+
 int server(char *service){
     int sd = ConnectionPassiveTCP(service, 5);
     int nsd;
