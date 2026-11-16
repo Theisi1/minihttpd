@@ -89,6 +89,16 @@ int server(char *service){
         close(sd);
         return -1;
     }
+    struct epoll_event ev;
+    ev.events = EPOLLIN;
+    ev.data.fd = sd;
+    if(epoll_ctl(epfd, EPOLL_CTL_ADD, sd, &ev) == -1){
+        perror("Falla en el epoll_ctl");
+        close(epfd);
+        close(sd);
+        return -1;
+    }
+    
 
     struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec(cualquiera)
     socklen_t l;        // (tamaño)
