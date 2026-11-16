@@ -126,7 +126,9 @@ int server(char *service){
                     close(nsd);
                     continue;
                 }
-
+            }
+            else{
+                nsd = eventos[i].data.fd;
                 char buf[1024];
                 nread = read(nsd, buf, sizeof(buf) - 1);
                 if (nread <= 0){
