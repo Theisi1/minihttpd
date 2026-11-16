@@ -119,6 +119,13 @@ int server(char *service){
                     perror("Error en el accept");
                     continue;
                 }
+                ev.events = EPOLLIN;
+                ev.data.fd = nsd;
+                if(epoll_ctl(epfd, EPOLL_CTL_ADD, nsd, &ev) == -1){
+                    perror("Falla epoll ctl con nsd");
+                    close(nsd);
+                    continue;
+                }
 
                 char buf[1024];
                 nread = read(nsd, buf, sizeof(buf) - 1);
