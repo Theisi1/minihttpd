@@ -139,6 +139,9 @@ int server(char *service){
                 nsd = eventos[i].data.fd;
                 char buf[1024];
                 nread = read(nsd, buf, sizeof(buf) - 1);
+                if( nread == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)){
+                    continue;
+                }
                 if (nread <= 0){
                     close(nsd);
                     continue;
