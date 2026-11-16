@@ -13,6 +13,7 @@
 #include "mime.h"
 #include "server.h"
 #include "files.h"
+#define MAX_EVENTOS 64
 
 static int ConnectionPassiveTCP(char *service, int qlen){
     int sd, s;
@@ -98,7 +99,8 @@ int server(char *service){
         close(sd);
         return -1;
     }
-    
+
+    struct epoll_event eventos[MAX_EVENTOS];
 
     struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec(cualquiera)
     socklen_t l;        // (tamaño)
