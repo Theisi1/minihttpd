@@ -8,6 +8,7 @@
 #include <sys/stat.h>  
 #include <netdb.h>
 #include <errno.h>
+#include <sys/epoll.h>
 #include "http.h"
 #include "mime.h"
 #include "server.h"
@@ -33,7 +34,7 @@ static int ConnectionPassiveTCP(char *service, int qlen){
         if(sd == -1){
             perror("No se pudo crear el socket ");
             continue;
-        }     
+        }
         if(setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &act, sizeof(act)) == -1){
             perror("Error en setsockpot");
             close(sd);
@@ -80,6 +81,12 @@ int server(char *service){
     int nsd;
     ssize_t nread;
     if(sd == -1){
+        return -1;
+    }
+    int epfd = epoll_create1(0);     
+    if(epfd == -1){
+        perror("Fallo epoll");
+        close(sd);
         return -1;
     }
 
