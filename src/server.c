@@ -123,6 +123,10 @@ int server(char *service){
                     perror("Error en el accept");
                     continue;
                 }
+                if(poner_no_bloqueante(nsd) == -1){
+                    close(nsd);
+                    continue;
+                }
                 ev.events = EPOLLIN;
                 ev.data.fd = nsd;
                 if(epoll_ctl(epfd, EPOLL_CTL_ADD, nsd, &ev) == -1){
