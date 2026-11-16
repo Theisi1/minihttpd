@@ -106,6 +106,11 @@ int server(char *service){
     socklen_t l;        // (tamaño)
 
     while (1){
+        int n = epoll_wait(epfd, eventos, MAX_EVENTOS, -1);
+        if(n == -1){
+            perror("Fallo en epoll_wait");
+            continue;
+        }
         l = sizeof(cltAddr);
         nsd = accept(sd, (struct sockaddr *)&cltAddr, &l);
         if(nsd == -1){
