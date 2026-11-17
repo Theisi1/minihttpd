@@ -50,7 +50,7 @@ static int ConnectionPassiveTCP(char *service, int qlen){
     }
 
     freeaddrinfo(res);
-    if(p == NULL){      //resume los errores de los bucles del for
+    if(p == NULL){      
         fprintf(stderr, "No hay nodo\n");
         return(-1);
     }
@@ -60,7 +60,6 @@ static int ConnectionPassiveTCP(char *service, int qlen){
         close(sd);
         return -1;
     }
-    //fuera del if de listen para que al final de la llamada retorne el socket sd
     return sd;
 }
 
@@ -106,8 +105,8 @@ int server(char *service){
 
     struct epoll_event eventos[MAX_EVENTOS];
 
-    struct sockaddr_storage cltAddr;   // (dirección) suficientemente grande para cualquier familia ya sea Inet o unspec(cualquiera)
-    socklen_t l;        // (tamaño)
+    struct sockaddr_storage cltAddr;   
+    socklen_t l;        
 
     while (1){
         int n = epoll_wait(epfd, eventos, MAX_EVENTOS, -1);
@@ -156,6 +155,11 @@ int server(char *service){
                 char version[128];
                 int scaner = sscanf(buf,"%63s %1023s %127s", metodo, ruta, version);
                 if(scaner != 3){
+                    responder_error("400", "Bad Request", nsd);
+                    close(nsd);
+                    continue;
+                }
+                if(strstr(buf, "Host:") == NULL){
                     responder_error("400", "Bad Request", nsd);
                     close(nsd);
                     continue;
