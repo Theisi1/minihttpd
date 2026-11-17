@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main (int argc, char *argv[]){
-    if (argc < 2){  //si no se escribio el puerto 
+    if (argc < 2){  
         fprintf(stderr, "Falta el puerto:\n");
         fprintf(stderr, "Uso: %s <puerto>\n", argv[0]);
         return 1;
