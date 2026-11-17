@@ -8,6 +8,29 @@ Mini Servidor HTTP/1.1, en Linux con sockets escritos en C.
 - Se maneja 5 códigos de error los que son: 405 "Method Not Allowed" : sale en caso de que el método sea diferente de GET, 400 "Bad Request": El servidor no pudo procesar la petición pero es fallo del cliente, 404 "Not Found": El archivo solicitado no se encuentra o no existe, 403 "Forbidden": No se permite el acceso solicitado y 500 "Internal Server Error": Error por parte del servidor.
 - La concurrencia se aplica con "epoll" quien nos permite controlar el como se atiende a varios clientes con un solo hilo. 
 
+## Estructura
+```
+minihttpd
+├── Makefile    Compila el servidorhttp.
+├── README.md    
+├── include
+│   ├── files.h     Declara abrir_archivo.
+│   ├── http.h      Declara responder_error.
+│   ├── mime.h      Declara extension.
+│   └── server.h    Declara server.
+├── src
+│   ├── files.c     Código en C de abrir archivos y usa realpath para no dejar salir de www/ (403).
+│   ├── http.c      Código en C para enviar las respuestas de error.
+│   ├── main.c      Código en C para arrancar el programa: revisa el puerto y llama a server().
+│   ├── mime.c      Código en C para devolver el Content-Type según la extensión. 
+│   └── server.c    Código en C para: socket, epoll, leer la petición y responder.
+└── www
+    ├── image.png
+    ├── index.html
+    └── style.css
+
+```
+
 ## Compilar 
 ```
 make
