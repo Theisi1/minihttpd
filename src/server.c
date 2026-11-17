@@ -212,7 +212,7 @@ int server(char *service){
                 "HTTP/1.1 200 OK\r\n"
                 "Content-type: %s\r\n"
                 "Content-Length: %lld\r\n"
-                "Connection: close\r\n"
+                "Connection: close\r\n"        
                 "\r\n",
                 extension(comp_ruta), (long long) info.st_size);
 
